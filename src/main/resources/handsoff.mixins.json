@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "package": "cyberslas.handsoff.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "BUILDTOKEN_MODID.refmap.json",
+  "mixins": [
+    "MixinAcquirePoi",
+    "MixinAssignProfessionFromJobSite",
+    "MixinGoToPotentialJobSite",
+    "MixinPoiRecordInterface",
+    "MixinPoiSectionInterface",
+    "MixinSectionStorageInterface",
+    "MixinServerLevel",
+    "MixinSetClosestHomeAsWalkTarget",
+    "MixinSetWalkTargetFromBlockMemory",
+    "MixinValidateNearbyPoi"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8",
+  "client": [
+    "MixinLevelRenderer"
+  ]
+}

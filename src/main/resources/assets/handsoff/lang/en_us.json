@@ -1,0 +1,24 @@
+{
+  "item.BUILDTOKEN_MODID.block_marker": "Block Marker",
+
+  "message.BUILDTOKEN_MODID.block_marked": "Marked %1$s at position %2$s.",
+  "message.BUILDTOKEN_MODID.block_unmarked": "Unmarked %1$s at position %2$s.",
+  "message.BUILDTOKEN_MODID.block_invalid": "%1$s at position %2$s is not a valid POI block.",
+  "message.BUILDTOKEN_MODID.block_marked_other_player": "Cannot unmark, %1$s at position %2$s is marked by another player.",
+
+  "config.BUILDTOKEN_MODID.config_message": "Show Messages",
+  "config.BUILDTOKEN_MODID.config_outline": "Draw Outline",
+  "config.BUILDTOKEN_MODID.config_outline_range": "Draw Outline Range",
+  "config.BUILDTOKEN_MODID.config_outline_thickness": "Outline Thickness",
+  "config.BUILDTOKEN_MODID.config_unlocked_outline_red": "Unlocked Outline Red Component",
+  "config.BUILDTOKEN_MODID.config_unlocked_outline_green": "Unlocked Outline Green Component",
+  "config.BUILDTOKEN_MODID.config_unlocked_outline_blue": "Unlocked Outline Blue Component",
+  "config.BUILDTOKEN_MODID.config_unlocked_outline_alpha": "Unlocked Outline Alpha Component",
+  "config.BUILDTOKEN_MODID.config_locked_outline_red": "Locked Outline Red Component",
+  "config.BUILDTOKEN_MODID.config_locked_outline_green": "Locked Outline Green Component",
+  "config.BUILDTOKEN_MODID.config_locked_outline_blue": "Locked Outline Blue Component",
+  "config.BUILDTOKEN_MODID.config_locked_outline_alpha": "Locked Outline Alpha Component",
+
+  "config.BUILDTOKEN_MODID.config_lock_to_player": "Lock To Player",
+  "config.BUILDTOKEN_MODID.config_poi_types": "Extra POI Types"
+}

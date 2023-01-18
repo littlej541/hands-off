@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[BUILDTOKEN_FORGEVERSIONSHORT,)"
+license="BUILDTOKEN_LICENSE"
+issueTrackerURL="BUILDTOKEN_ISSUES"
+
+[[mods]]
+	modId="BUILDTOKEN_MODID"
+	version="BUILDTOKEN_VERSION"
+	displayName="BUILDTOKEN_MODNAME"
+	displayURL="BUILDTOKEN_URL"
+	logoFile="BUILDTOKEN_LOGOFILE"
+	authors="BUILDTOKEN_AUTHORS"
+	description='''BUILDTOKEN_MODDESCRIPTION'''
+
+[[dependencies.BUILDTOKEN_MODID]]
+    modId="forge"
+    mandatory=true
+    versionRange="[BUILDTOKEN_FORGEVERSIONSHORT,]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.BUILDTOKEN_MODID]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[BUILDTOKEN_MCVERSION]"
+    ordering="NONE"
+    side="BOTH"

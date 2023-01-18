@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  d",
+    " p ",
+    "s  "
+  ],
+  "key": {
+    "d": {
+      "tag": "forge:dyes/red"
+    },
+    "p": {
+      "tag": "minecraft:planks"
+    },
+    "s": {
+      "tag": "forge:rods/wooden"
+    }
+  },
+  "result": {
+    "item": "BUILDTOKEN_MODID:block_marker"
+  }
+}
