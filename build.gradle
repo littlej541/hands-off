@@ -103,6 +103,9 @@ task generateLangJava {
 task processSources(type: Copy) {
     from 'src/main/java'
     into "$buildDir/generated/sources"
+
+    filteringCharset = 'UTF-8'
+
     filter {
         String line -> line.replaceAll("BUILDTOKEN_MODID", "${modid}")
     }
@@ -114,6 +117,8 @@ task processSources(type: Copy) {
 
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    filteringCharset = 'UTF-8'
 
     from (sourceSets.main.resources.srcDirs) {
         filesNotMatching('**/*.png') {
