@@ -9,6 +9,6 @@ public class Helper {
     }
 
     public static boolean playerHoldingBlockMarker(Player player) {
-        return player.getMainHandItem().getItem().equals(Items.BLOCK_MARKER.get().asItem()) || player.getOffhandItem().getItem().equals(Items.BLOCK_MARKER.get().asItem());
+        return player.getMainHandItem().getItem().equals(Constants.MARKER_ITEM) || player.getOffhandItem().getItem().equals(Constants.MARKER_ITEM);
     }
 }

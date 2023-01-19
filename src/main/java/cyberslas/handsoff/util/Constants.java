@@ -1,5 +1,8 @@
 package cyberslas.handsoff.util;
 
+import cyberslas.handsoff.registry.Items;
+import net.minecraft.world.item.Item;
+
 public class Constants {
     public static final String MODID = "BUILDTOKEN_MODID";
 
@@ -21,4 +24,5 @@ public class Constants {
     public final static int DEFAULT_LOCKED_ALPHA_VALUE = 255;
 
     public final static int BLOCKS_PER_SECTION_SIDE = 16;
+    public final static Item MARKER_ITEM = Items.BLOCK_MARKER.get();
 }
