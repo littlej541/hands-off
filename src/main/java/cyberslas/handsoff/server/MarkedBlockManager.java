@@ -129,7 +129,8 @@ public class MarkedBlockManager {
                         return null;
                     }
 
-                    return ForgeRegistries.POI_TYPES.getValue(new ResourceLocation(splitPair[0], splitPair[1])).getPredicate();
+                    PoiType poiType = ForgeRegistries.POI_TYPES.getValue(new ResourceLocation(splitPair[0], splitPair[1]));
+                    return poiType != null ? poiType.getPredicate() : null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet()));
