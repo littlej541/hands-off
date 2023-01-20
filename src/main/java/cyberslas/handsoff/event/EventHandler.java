@@ -27,6 +27,6 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
-        MarkedBlockManager.unloadChunk(event.getChunk());
+        MarkedBlockManager.unloadChunk(event.getWorld(), event.getChunk());
     }
 }

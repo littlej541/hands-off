@@ -197,7 +197,7 @@ public class MarkedBlockManager {
         INSTANCE.chunkMap.put(chunk, data);
     }
 
-    public static void unloadChunk(ChunkAccess chunk) {
+    public static void unloadChunk(LevelAccessor level, ChunkAccess chunk) {
         INSTANCE.chunkMap.remove(chunk);
     }
 
