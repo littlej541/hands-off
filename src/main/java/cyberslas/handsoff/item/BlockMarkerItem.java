@@ -35,14 +35,14 @@ public class BlockMarkerItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        BlockHitResult hitresult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
+        BlockHitResult hitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         ItemStack itemstack = player.getItemInHand(hand);
 
-        if (!hitresult.getType().equals(HitResult.Type.MISS)) {
+        if (!hitResult.getType().equals(HitResult.Type.MISS)) {
             if (!level.isClientSide) {
                 ServerPlayer serverPlayer = (ServerPlayer)player;
                 UUID uuid = serverPlayer.getUUID();
-                BlockPos blockPos = hitresult.getBlockPos();
+                BlockPos blockPos = hitResult.getBlockPos();
                 BlockState blockState = level.getBlockState(blockPos);
                 if (blockState.getBlock() instanceof BedBlock) {
                     if (blockState.getValue(BedBlock.PART) != BedPart.HEAD) {
