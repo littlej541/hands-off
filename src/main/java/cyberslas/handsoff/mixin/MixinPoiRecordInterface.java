@@ -1,5 +1,6 @@
 package cyberslas.handsoff.mixin;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,5 +15,5 @@ public interface MixinPoiRecordInterface {
     void setFreeTickets(int count);
 
     @Accessor
-    PoiType getPoiType();
+    Holder<PoiType> getPoiType();
 }

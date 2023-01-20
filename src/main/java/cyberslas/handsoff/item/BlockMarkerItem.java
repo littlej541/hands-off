@@ -67,7 +67,7 @@ public class BlockMarkerItem extends Item {
                                     mixinPoiSectionInterface.invokeGetPoiRecord(finalBlockPos)
                                             .ifPresent(poiRecord -> {
                                                 MixinPoiRecordInterface mixinPoiRecordInterface = (MixinPoiRecordInterface) poiRecord;
-                                                mixinPoiRecordInterface.setFreeTickets(mixinPoiRecordInterface.getPoiType().getMaxTickets());
+                                                mixinPoiRecordInterface.setFreeTickets(mixinPoiRecordInterface.getPoiType().get().maxTickets());
                                                 mixinPoiRecordInterface.getSetDirty().run();
                                             });
                                     mixinPoiSectionInterface.getSetDirty().run();

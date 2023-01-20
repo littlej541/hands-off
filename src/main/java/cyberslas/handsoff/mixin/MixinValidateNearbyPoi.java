@@ -4,6 +4,7 @@ import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.util.ServerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.ValidateNearbyPoi;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
@@ -23,7 +24,7 @@ public abstract class MixinValidateNearbyPoi {
     }
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;exists(Lnet/minecraft/core/BlockPos;Ljava/util/function/Predicate;)Z"), method = "poiDoesntExist")
-    private boolean removeIfExists(PoiManager instance, BlockPos pos, Predicate<PoiType> poiTypePredicate, ServerLevel level) {
+    private boolean removeIfExists(PoiManager instance, BlockPos pos, Predicate<Holder<PoiType>> poiTypePredicate, ServerLevel level) {
         return ServerHelper.removeFromBlockOwnershipMapIfExists(instance, GlobalPos.of(level.dimension(), pos), poiTypePredicate);
     }
 

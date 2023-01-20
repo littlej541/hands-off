@@ -8,7 +8,7 @@ import cyberslas.handsoff.util.Lang;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -26,10 +26,10 @@ public class ClientPacketHandler {
             BlockPos pos = packet.pos();
             Block block = mc.level.getBlockState(pos).getBlock();
             switch (packet.result()) {
-                case MARKED -> chat.addMessage(new TranslatableComponent(Lang.BLOCK_MARKED.getKey(), block.getName(), pos.toShortString()));
-                case UNMARKED -> chat.addMessage(new TranslatableComponent(Lang.BLOCK_UNMARKED.getKey(), block.getName(), pos.toShortString()));
-                case INVALID -> chat.addMessage(new TranslatableComponent(Lang.BLOCK_INVALID.getKey(), block.getName(), pos.toShortString()));
-                case MARKED_OTHER_PLAYER -> chat.addMessage(new TranslatableComponent(Lang.BLOCK_MARKED_OTHER_PLAYER.getKey(), block.getName(), pos.toShortString()));
+                case MARKED -> chat.addMessage(Component.translatable(Lang.BLOCK_MARKED.getKey(), block.getName(), pos.toShortString()));
+                case UNMARKED -> chat.addMessage(Component.translatable(Lang.BLOCK_UNMARKED.getKey(), block.getName(), pos.toShortString()));
+                case INVALID -> chat.addMessage(Component.translatable(Lang.BLOCK_INVALID.getKey(), block.getName(), pos.toShortString()));
+                case MARKED_OTHER_PLAYER -> chat.addMessage(Component.translatable(Lang.BLOCK_MARKED_OTHER_PLAYER.getKey(), block.getName(), pos.toShortString()));
             }
         }
     }

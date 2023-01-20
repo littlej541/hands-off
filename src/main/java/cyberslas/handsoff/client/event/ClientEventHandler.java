@@ -25,13 +25,13 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onJoinWorld(ClientPlayerNetworkEvent.LoggedInEvent event) {
+    public static void onJoinWorld(ClientPlayerNetworkEvent.LoggingIn event) {
         DrawMarkedBlockHighlight.init(Minecraft.getInstance());
         ClientHelper.Network.requestMarkedBlocks();
     }
 
     @SubscribeEvent
-    public static void onRespawn(ClientPlayerNetworkEvent.RespawnEvent event) {
+    public static void onRespawn(ClientPlayerNetworkEvent.Clone event) {
         ClientHelper.Network.requestMarkedBlocks();
     }
 

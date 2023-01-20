@@ -7,6 +7,7 @@ import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.network.ServerNetworkHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,7 +47,7 @@ public class ServerHelper {
         }
     }
 
-    public static boolean removeFromBlockOwnershipMapIfExists(PoiManager poiManager, GlobalPos pos, Predicate<PoiType> poiTypePredicate) {
+    public static boolean removeFromBlockOwnershipMapIfExists(PoiManager poiManager, GlobalPos pos, Predicate<Holder<PoiType>> poiTypePredicate) {
         boolean exists = poiManager.exists(pos.pos(), poiTypePredicate);
         if (!exists) {
             MarkedBlockManager.remove(pos);

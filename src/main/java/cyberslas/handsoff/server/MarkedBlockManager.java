@@ -10,6 +10,7 @@ import cyberslas.handsoff.server.util.ServerHelper;
 import cyberslas.handsoff.util.Helper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
@@ -21,6 +22,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -35,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -46,10 +50,10 @@ public class MarkedBlockManager {
 
     private final Map<ChunkId, ChunkData> chunkMap = new HashMap<>();
     private final Multimap<UUID, GlobalPos> uuidMarkedMap = HashMultimap.create();
-    private final Set<Predicate<PoiType>> POI_PREDICATES = new HashSet<>();
-    private final Set<Predicate<PoiType>> EXTRA_POI_PREDICATES = new HashSet<>();
+    private final Set<Predicate<Holder<PoiType>>> POI_PREDICATES = new HashSet<>();
+    private final Set<Predicate<Holder<PoiType>>> EXTRA_POI_PREDICATES = new HashSet<>();
     private final Set<Block> POI_BLOCKS = new HashSet<>();
-    private final Predicate<PoiType> POI_TEST = poiType -> POI_PREDICATES.stream().anyMatch(predicate -> predicate.test(poiType)) ||
+    private final Predicate<Holder<PoiType>> POI_TEST = poiType -> POI_PREDICATES.stream().anyMatch(predicate -> predicate.test(poiType)) ||
             EXTRA_POI_PREDICATES.stream().anyMatch(predicate -> predicate.test(poiType));
     private final Map<Block, PoiType> BLOCK_POI_MAPPING = new HashMap<>();
 
@@ -100,7 +104,7 @@ public class MarkedBlockManager {
         return removedUUID.values().stream().map(GlobalPos::pos).collect(Collectors.toSet());
     }
 
-    public static boolean testPoi(PoiType toTest) {
+    public static boolean testPoi(Holder<PoiType> toTest) {
         return INSTANCE.POI_TEST.test(toTest);
     }
 
@@ -116,10 +120,21 @@ public class MarkedBlockManager {
         return new ChunkId(chunk.getLevel().dimension(), chunk.getPos());
     }
 
+    private static Predicate<Holder<PoiType>> makePredicateWithLambda(Predicate<Holder<PoiType>> lambdaFunction) {
+        return lambdaFunction;
+    }
+
     private MarkedBlockManager() {
         this.POI_PREDICATES.addAll(ForgeRegistries.POI_TYPES.getValues().stream()
-                .filter(poiType -> PoiType.ALL_JOBS.test(poiType) || PoiType.HOME.getPredicate().test(poiType))
-                .map(PoiType::getPredicate)
+                .filter(poiType -> {
+                    Holder<PoiType> holder = ForgeRegistries.POI_TYPES.getHolder(poiType).get();
+                    return VillagerProfession.ALL_ACQUIRABLE_JOBS.test(holder) ||
+                            holder.is(PoiTypes.HOME);
+                })
+                .map(poiType -> {
+                    ResourceKey<PoiType> holder = ForgeRegistries.POI_TYPES.getResourceKey(poiType).get();
+                    return makePredicateWithLambda(l -> l.is(holder));
+                })
                 .collect(Collectors.toSet()));
         this.EXTRA_POI_PREDICATES.addAll(Config.COMMON.extraPoiTypes.get().stream()
                 .map(mapping -> {
@@ -129,14 +144,19 @@ public class MarkedBlockManager {
                         return null;
                     }
 
-                    return ForgeRegistries.POI_TYPES.getValue(new ResourceLocation(splitPair[0], splitPair[1])).getPredicate();
+                    Optional<ResourceKey<PoiType>> optionalHolder = ForgeRegistries.POI_TYPES.getResourceKey(ForgeRegistries.POI_TYPES.getValue(new ResourceLocation(splitPair[0], splitPair[1])));
+                    if (optionalHolder.isPresent()) {
+                        return makePredicateWithLambda(l -> l.is(optionalHolder.get()));
+                    }
+
+                    return null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet()));
         this.POI_BLOCKS.addAll(ForgeRegistries.POI_TYPES.getValues().stream()
-                .filter(this.POI_TEST)
+                .filter(poiType -> this.POI_TEST.test(ForgeRegistries.POI_TYPES.getHolder(poiType).get()))
                 .flatMap(item -> {
-                    Set<BlockState> blockStates = item.getBlockStates();
+                    Set<BlockState> blockStates = item.matchingStates();
 
                     return blockStates.stream()
                             .map(blockState -> {
@@ -201,8 +221,9 @@ public class MarkedBlockManager {
             BlockPos blockPos = entry.getKey().pos();
             BlockState blockState = entry.getValue().getSecond();
             Block block = blockState.getBlock();
+            ResourceKey<PoiType> holder = ForgeRegistries.POI_TYPES.getResourceKey(INSTANCE.BLOCK_POI_MAPPING.get(block)).get();
 
-            if (!SERVER.getLevel(entry.getKey().dimension()).getPoiManager().exists(blockPos, INSTANCE.BLOCK_POI_MAPPING.get(block).getPredicate())) {
+            if (!SERVER.getLevel(entry.getKey().dimension()).getPoiManager().exists(blockPos, makePredicateWithLambda(x -> x.is(holder)))) {
                 markedForRemoval.add(entry.getKey());
             }
         }

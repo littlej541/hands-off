@@ -4,6 +4,7 @@ import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.util.ServerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.GoToPotentialJobSite;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -38,7 +39,7 @@ public abstract class MixinGoToPotentialJobSite {
     }
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;exists(Lnet/minecraft/core/BlockPos;Ljava/util/function/Predicate;)Z"), method = "*(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/GlobalPos;)V")
-    private static boolean removeIfExists(PoiManager instance, BlockPos pos, Predicate<PoiType> poiTypePredicate) {
+    private static boolean removeIfExists(PoiManager instance, BlockPos pos, Predicate<Holder<PoiType>> poiTypePredicate) {
         return ServerHelper.removeFromBlockOwnershipMapIfExists(instance, GlobalPos.of(serverLevel.dimension(), pos), poiTypePredicate);
     }
 
