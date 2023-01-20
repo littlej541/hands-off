@@ -1,6 +1,6 @@
 package cyberslas.handsoff.mixin;
 
-import cyberslas.handsoff.server.MarkedBlockMap;
+import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.util.ServerHelper;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,7 +23,7 @@ public abstract class MixinAssignProfessionFromJobSite {
         if (globalPosOptional.isPresent()) {
             GlobalPos pos = globalPosOptional.get();
 
-            if (MarkedBlockMap.contains(pos)) {
+            if (MarkedBlockManager.contains(pos)) {
                 ServerHelper.clearPoiAndMemory(villager, MemoryModuleType.POTENTIAL_JOB_SITE);
 
                 ci.cancel();

@@ -45,12 +45,12 @@ public class DrawMarkedBlockHighlight {
 
     public static void init(Minecraft mc) {
         INSTANCE = new DrawMarkedBlockHighlight(mc);
+        RenderOutline.create();
     }
 
     private DrawMarkedBlockHighlight(Minecraft mc) {
         this.bufferSource = mc.renderBuffers().bufferSource();
         this.minecraft = mc;
-        RenderOutline.create();
     }
 
     public static void render(LevelRenderer levelRenderer, Camera camera, PoseStack poseStack) {

@@ -1,6 +1,6 @@
 package cyberslas.handsoff.mixin;
 
-import cyberslas.handsoff.server.MarkedBlockMap;
+import cyberslas.handsoff.server.MarkedBlockManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
@@ -25,6 +25,6 @@ public abstract class MixinSetClosestHomeAsWalkTarget {
 
     @ModifyVariable(at = @At(value = "STORE"), ordinal = 0, method = "start")
     private Stream<BlockPos> filterMarked(Stream<BlockPos> value) {
-        return value.filter((pos) -> !MarkedBlockMap.contains(GlobalPos.of(serverLevel.dimension(), pos)));
+        return value.filter((pos) -> !MarkedBlockManager.contains(GlobalPos.of(serverLevel.dimension(), pos)));
     }
 }

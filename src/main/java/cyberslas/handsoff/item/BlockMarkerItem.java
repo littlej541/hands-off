@@ -5,8 +5,8 @@ import cyberslas.handsoff.mixin.MixinPoiRecordInterface;
 import cyberslas.handsoff.mixin.MixinPoiSectionInterface;
 import cyberslas.handsoff.mixin.MixinSectionStorageInterface;
 import cyberslas.handsoff.network.ClientboundMarkResultPacket;
+import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.util.ServerHelper;
-import cyberslas.handsoff.server.MarkedBlockMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.SectionPos;
@@ -52,9 +52,9 @@ public class BlockMarkerItem extends Item {
 
                 GlobalPos globalPos = GlobalPos.of(level.dimension(), blockPos);
 
-                if (MarkedBlockMap.contains(globalPos)) {
-                    if (!Config.COMMON.lockToPlayer.get() || Config.COMMON.lockToPlayer.get() && MarkedBlockMap.get(globalPos).equals(uuid)) {
-                        MarkedBlockMap.remove(globalPos);
+                if (MarkedBlockManager.contains(globalPos)) {
+                    if (!Config.COMMON.lockToPlayer.get() || Config.COMMON.lockToPlayer.get() && MarkedBlockManager.get(globalPos).equals(uuid)) {
+                        MarkedBlockManager.remove(globalPos);
 
                         ServerLevel serverLevel = (ServerLevel) level;
                         PoiManager poiManager = serverLevel.getPoiManager();
@@ -81,7 +81,7 @@ public class BlockMarkerItem extends Item {
                         return InteractionResultHolder.fail(itemstack);
                     }
                 } else {
-                    if (MarkedBlockMap.put(globalPos, uuid)) {
+                    if (MarkedBlockManager.put(globalPos, uuid)) {
                         ServerHelper.Network.sendMarkResult(serverPlayer, blockPos, ClientboundMarkResultPacket.Result.MARKED);
                     } else {
                         ServerHelper.Network.sendMarkResult(serverPlayer, blockPos, ClientboundMarkResultPacket.Result.INVALID);

@@ -1,6 +1,6 @@
 package cyberslas.handsoff.mixin;
 
-import cyberslas.handsoff.server.MarkedBlockMap;
+import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.util.ServerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -31,7 +31,7 @@ public abstract class MixinGoToPotentialJobSite {
         if (optionalGlobalPos.isPresent()) {
             GlobalPos pos = optionalGlobalPos.get();
 
-            if (MarkedBlockMap.contains(pos)) {
+            if (MarkedBlockManager.contains(pos)) {
                 cir.setReturnValue(false);
             }
         }

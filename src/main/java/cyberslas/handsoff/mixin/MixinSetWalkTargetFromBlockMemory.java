@@ -1,7 +1,7 @@
 package cyberslas.handsoff.mixin;
 
+import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.util.ServerHelper;
-import cyberslas.handsoff.server.MarkedBlockMap;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.SetWalkTargetFromBlockMemory;
@@ -23,7 +23,7 @@ public abstract class MixinSetWalkTargetFromBlockMemory {
     @Inject(at = @At(value = "HEAD"), method = "start(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/npc/Villager;J)V", cancellable = true)
     private void checkIfMarked(ServerLevel level, Villager villager, long startTimeMaybe, CallbackInfo ci) {
         villager.getBrain().getMemory(this.memoryType).ifPresent(globalPos -> {
-            if (MarkedBlockMap.contains(globalPos)) {
+            if (MarkedBlockManager.contains(globalPos)) {
                 ServerHelper.clearPoiAndMemory(villager, memoryType);
                 ci.cancel();
             }

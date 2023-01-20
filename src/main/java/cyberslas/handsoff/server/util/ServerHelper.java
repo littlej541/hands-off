@@ -3,7 +3,7 @@ package cyberslas.handsoff.server.util;
 import cyberslas.handsoff.config.Config;
 import cyberslas.handsoff.network.ClientboundMarkResultPacket;
 import cyberslas.handsoff.network.ClientboundUpdateMarkedBlockPositionsPacket;
-import cyberslas.handsoff.server.MarkedBlockMap;
+import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.network.ServerNetworkHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -49,7 +49,7 @@ public class ServerHelper {
     public static boolean removeFromBlockOwnershipMapIfExists(PoiManager poiManager, GlobalPos pos, Predicate<PoiType> poiTypePredicate) {
         boolean exists = poiManager.exists(pos.pos(), poiTypePredicate);
         if (!exists) {
-            MarkedBlockMap.remove(pos);
+            MarkedBlockManager.remove(pos);
         }
 
         return exists;
@@ -58,11 +58,11 @@ public class ServerHelper {
     public static class Network {
         public static void sendMarkedBlocksUpdate(ServerPlayer player, int range) {
             UUID uuid = player.getUUID();
-            Set<BlockPos> unlockedPositions = MarkedBlockMap.getPosMarkedByUUID(uuid);
-            Set<BlockPos> lockedPositions = MarkedBlockMap.getPosMarkedByOtherUUID(uuid);
+            Set<BlockPos> unlockedPositions = MarkedBlockManager.getPosMarkedByUUID(uuid);
+            Set<BlockPos> lockedPositions = MarkedBlockManager.getPosMarkedByOtherUUID(uuid);
 
             Set<BlockPos> inRangeSet = player.getLevel().getPoiManager()
-                    .getInRange(MarkedBlockMap::testPoi, player.blockPosition(), range, PoiManager.Occupancy.ANY)
+                    .getInRange(MarkedBlockManager::testPoi, player.blockPosition(), range, PoiManager.Occupancy.ANY)
                     .map(PoiRecord::getPos)
                     .collect(Collectors.toSet());
 

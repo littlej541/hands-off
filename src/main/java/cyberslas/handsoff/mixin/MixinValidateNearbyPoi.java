@@ -1,6 +1,6 @@
 package cyberslas.handsoff.mixin;
 
-import cyberslas.handsoff.server.MarkedBlockMap;
+import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.server.util.ServerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 public abstract class MixinValidateNearbyPoi {
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/behavior/ValidateNearbyPoi;poiDoesntExist(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;)Z"), method = "start")
     private boolean checkIfMarked(ValidateNearbyPoi instance, ServerLevel level, BlockPos pos) {
-        return this.poiDoesntExist(level, pos) || MarkedBlockMap.contains(GlobalPos.of(level.dimension(), pos));
+        return this.poiDoesntExist(level, pos) || MarkedBlockManager.contains(GlobalPos.of(level.dimension(), pos));
     }
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;exists(Lnet/minecraft/core/BlockPos;Ljava/util/function/Predicate;)Z"), method = "poiDoesntExist")

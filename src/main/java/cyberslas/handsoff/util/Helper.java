@@ -1,6 +1,5 @@
 package cyberslas.handsoff.util;
 
-import cyberslas.handsoff.registry.Items;
 import net.minecraft.world.entity.player.Player;
 
 public class Helper {

@@ -1,6 +1,6 @@
 package cyberslas.handsoff.mixin;
 
-import cyberslas.handsoff.server.MarkedBlockMap;
+import cyberslas.handsoff.server.MarkedBlockManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
@@ -17,6 +17,6 @@ public abstract class MixinServerLevel {
 
     @Inject(at = @At(value = "HEAD"), method = "*(Lnet/minecraft/core/BlockPos;)V")
     private void checkIfPoiRemoved(BlockPos blockPos, CallbackInfo ci) {
-        MarkedBlockMap.remove(GlobalPos.of(this.getLevel().dimension(), blockPos));
+        MarkedBlockManager.remove(GlobalPos.of(this.getLevel().dimension(), blockPos));
     }
 }
