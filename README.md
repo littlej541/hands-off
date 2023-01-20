@@ -3,7 +3,7 @@ Minecraft mod that allows you to stop villagers from claiming your beds and job 
 
 ## Usage
 
-To mark POI blocks as offlimits to villagers, the Block Marker tool must be used. Simply hold the tool and right-click on the desired block. The recipe to craft the tool is:
+To mark POI blocks as off-limits to villagers, the Block Marker tool must be used. Simply hold the tool and right-click on the desired block. The recipe to craft the tool is:
 
 ![Recipe](images/recipe.png)
 
@@ -26,7 +26,7 @@ Toggle messages when marking blocks and outlines denoting marked blocks. Also ch
 
 Toggle a player based block marking lock and specify POI types for mod compatibility.
 
-- `lockToPlayer` - Blocks others from changing the marked status of blocks the did not mark themselves.
+- `lockToPlayer` - Blocks others from changing the marked status of blocks they did not mark themselves.
     - This does **NOT** stop players from simply breaking the block to remove the status, this should be accomplished through other means.
 - `extraPoiTypes` Allows extra POI types be specified as able to be marked.
     - It is a list of registry names for POI types. These values may be difficult to find without viewing source code. Format is of the form:
