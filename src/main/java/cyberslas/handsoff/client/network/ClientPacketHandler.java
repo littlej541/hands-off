@@ -20,7 +20,7 @@ public class ClientPacketHandler {
     }
 
     public static void handleMarkResult(ClientboundMarkResultPacket packet, Supplier<NetworkEvent.Context> context) {
-        if (Config.CLIENT.showMessage.get()) {
+        if (Config.CLIENT.showMessages.get()) {
             Minecraft mc = Minecraft.getInstance();
             ChatComponent chat = mc.gui.getChat();
             BlockPos pos = packet.pos();

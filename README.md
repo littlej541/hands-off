@@ -1,18 +1,26 @@
 # hands-off
 Minecraft mod that allows you to stop villagers from claiming your beds and job blocks.
 
+## Usage
+
+To mark POI blocks as offlimits to villagers, the Block Marker tool must be used. Simply hold the tool and right-click on the desired block. The recipe to craft the tool is:
+
+![Recipe](images/recipe.png)
+
+Any items tagged as `forge:dyes/red` for the dye, `minecraft:planks` for the planks, and `forge:rods/wooden` for the stick can be used.
+
 ## Configuration
 
 ### Client
 
 Toggle messages when marking blocks and outlines denoting marked blocks. Also change range at which outlines appear and the color of said outlines.
 
-- `showMessage` - Display chat messages when player marks/unmarks blocks
+- `showMessages` - Display chat messages when player marks/unmarks blocks
 - `showOutlines` - Display outlines on marked blocks
-- `showOutlinesRange` - Max range that outlines are drawn to, in blocks
-- `showOutlinesThickness` - Thickness of outlines
-- `unlockedOutline*` - Color components of outline for blocks that are marked and can be unmarked
-- `LockedOutline*` - Color components of outline for blocks that are marked and cannot be unmarked
+- `drawOutlinesRange` - Max range that outlines are drawn to, in blocks
+- `outlinesThickness` - Thickness of outlines
+- `unlockedOutlines[Red|Green|Blue|Alpha]` - Color components of outline for blocks that are marked and can be unmarked
+- `lockedOutlines[Red|Green|Blue|Alpha]` - Color components of outline for blocks that are marked and cannot be unmarked
 
 ### Common
 

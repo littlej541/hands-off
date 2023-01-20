@@ -84,11 +84,11 @@ public class DrawMarkedBlockHighlight {
         }
 
         private static void create() {
-            unlockedColor = new Vector4f(Config.CLIENT.showUnlockedOutlinesRed.get(),  Config.CLIENT.showUnlockedOutlinesGreen.get(), Config.CLIENT.showUnlockedOutlinesBlue.get(), Config.CLIENT.showUnlockedOutlinesAlpha.get());
+            unlockedColor = new Vector4f(Config.CLIENT.unlockedOutlinesRed.get(),  Config.CLIENT.unlockedOutlinesGreen.get(), Config.CLIENT.unlockedOutlinesBlue.get(), Config.CLIENT.unlockedOutlinesAlpha.get());
             unlockedColor.mul(1.0f / 255.0f);
-            lockedColor = new Vector4f(Config.CLIENT.showLockedOutlinesRed.get(),  Config.CLIENT.showLockedOutlinesGreen.get(), Config.CLIENT.showLockedOutlinesBlue.get(), Config.CLIENT.showLockedOutlinesAlpha.get());
+            lockedColor = new Vector4f(Config.CLIENT.lockedOutlinesRed.get(),  Config.CLIENT.lockedOutlinesGreen.get(), Config.CLIENT.lockedOutlinesBlue.get(), Config.CLIENT.lockedOutlinesAlpha.get());
             lockedColor.mul(1.0f / 255.0f);
-            renderRange = Math.min(Helper.getMaxBlockRenderRange(INSTANCE.minecraft.options.getEffectiveRenderDistance()), Config.CLIENT.showOutlinesRange.get());
+            renderRange = Math.min(Helper.getMaxBlockRenderRange(INSTANCE.minecraft.options.getEffectiveRenderDistance()), Config.CLIENT.drawOutlinesRange.get());
 
             renderType = RenderType.create("block_outline",
                     DefaultVertexFormat.POSITION_COLOR_NORMAL,
@@ -98,7 +98,7 @@ public class DrawMarkedBlockHighlight {
                     false,
                     RenderType.CompositeState.builder()
                             .setShaderState(RENDERTYPE_LINES_SHADER)
-                            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(Config.CLIENT.showOutlinesThickness.get())))
+                            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(Config.CLIENT.outlinesThickness.get())))
                             .setLayeringState(VIEW_OFFSET_Z_LAYERING)
                             .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
                             .setOutputState(ITEM_ENTITY_TARGET)

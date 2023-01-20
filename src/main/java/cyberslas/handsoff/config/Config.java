@@ -16,81 +16,81 @@ public class Config {
     public static final ForgeConfigSpec CONFIG_SPEC_COMMON = commonBuilder.build();
 
     public static class Client {
-        public final ForgeConfigSpec.ConfigValue<Boolean> showMessage;
+        public final ForgeConfigSpec.ConfigValue<Boolean> showMessages;
         public final ForgeConfigSpec.ConfigValue<Boolean> showOutlines;
-        public final ForgeConfigSpec.ConfigValue<Integer> showOutlinesRange;
-        public final ForgeConfigSpec.ConfigValue<Double> showOutlinesThickness;
-        public final ForgeConfigSpec.ConfigValue<Integer> showUnlockedOutlinesRed;
-        public final ForgeConfigSpec.ConfigValue<Integer> showUnlockedOutlinesGreen;
-        public final ForgeConfigSpec.ConfigValue<Integer> showUnlockedOutlinesBlue;
-        public final ForgeConfigSpec.ConfigValue<Integer> showUnlockedOutlinesAlpha;
-        public final ForgeConfigSpec.ConfigValue<Integer> showLockedOutlinesRed;
-        public final ForgeConfigSpec.ConfigValue<Integer> showLockedOutlinesGreen;
-        public final ForgeConfigSpec.ConfigValue<Integer> showLockedOutlinesBlue;
-        public final ForgeConfigSpec.ConfigValue<Integer> showLockedOutlinesAlpha;
+        public final ForgeConfigSpec.ConfigValue<Integer> drawOutlinesRange;
+        public final ForgeConfigSpec.ConfigValue<Double> outlinesThickness;
+        public final ForgeConfigSpec.ConfigValue<Integer> unlockedOutlinesRed;
+        public final ForgeConfigSpec.ConfigValue<Integer> unlockedOutlinesGreen;
+        public final ForgeConfigSpec.ConfigValue<Integer> unlockedOutlinesBlue;
+        public final ForgeConfigSpec.ConfigValue<Integer> unlockedOutlinesAlpha;
+        public final ForgeConfigSpec.ConfigValue<Integer> lockedOutlinesRed;
+        public final ForgeConfigSpec.ConfigValue<Integer> lockedOutlinesGreen;
+        public final ForgeConfigSpec.ConfigValue<Integer> lockedOutlinesBlue;
+        public final ForgeConfigSpec.ConfigValue<Integer> lockedOutlinesAlpha;
 
         public Client(ForgeConfigSpec.Builder builder) {
-            showMessage = builder
+            showMessages = builder
                     .comment("Write messages to chat when block mark state is changed with tool by player.",
                             "Default: true")
                     .translation(Lang.CONFIG_MESSAGE.key())
-                    .define("showMessage", true);
+                    .define("showMessages", true);
 
             showOutlines = builder
                     .comment("Draw highlighted outline on marked blocks while holding tool.",
                             "Default: true")
                     .translation(Lang.CONFIG_OUTLINE.key())
                     .define("showOutlines", true);
-            showOutlinesRange = builder
+            drawOutlinesRange = builder
                     .comment("Range in blocks that outline is rendered.",
                             "Default: " + Constants.DEFAULT_DRAW_OUTLINE_RANGE)
                     .translation(Lang.CONFIG_OUTLINE_RANGE.key())
-                    .defineInRange("showOutlinesRange", Constants.DEFAULT_DRAW_OUTLINE_RANGE, Constants.MIN_DRAW_OUTLINE_RANGE, Constants.MAX_DRAW_OUTLINE_RANGE);
-            showOutlinesThickness = builder
+                    .defineInRange("drawOutlinesRange", Constants.DEFAULT_DRAW_OUTLINE_RANGE, Constants.MIN_DRAW_OUTLINE_RANGE, Constants.MAX_DRAW_OUTLINE_RANGE);
+            outlinesThickness = builder
                     .comment("Line thickness for outline.",
                             "Default: " + Constants.DEFAULT_OUTLINE_THICKNESS)
                     .translation(Lang.CONFIG_OUTLINE_THICKNESS.key())
-                    .defineInRange("showOutlinesThickness", Constants.DEFAULT_OUTLINE_THICKNESS, Constants.MIN_OUTLINE_THICKNESS, Constants.MAX_OUTLINE_THICKNESS);
-            showUnlockedOutlinesRed = builder
+                    .defineInRange("outlinesThickness", Constants.DEFAULT_OUTLINE_THICKNESS, Constants.MIN_OUTLINE_THICKNESS, Constants.MAX_OUTLINE_THICKNESS);
+            unlockedOutlinesRed = builder
                     .comment("Unlocked line red color component.",
                             "Default: " + Constants.DEFAULT_UNLOCKED_RED_VALUE)
                     .translation(Lang.CONFIG_UNLOCKED_OUTLINE_RED.key())
-                    .defineInRange("showOutlinesUnlockedRed", Constants.DEFAULT_UNLOCKED_RED_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
-            showUnlockedOutlinesGreen = builder
+                    .defineInRange("unlockedOutlinesRed", Constants.DEFAULT_UNLOCKED_RED_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
+            unlockedOutlinesGreen = builder
                     .comment("Unlocked line green color component.",
                             "Default: " + Constants.DEFAULT_UNLOCKED_GREEN_VALUE)
                     .translation(Lang.CONFIG_UNLOCKED_OUTLINE_GREEN.key())
-                    .defineInRange("showOutlinesUnlockedGreen", Constants.DEFAULT_UNLOCKED_GREEN_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
-            showUnlockedOutlinesBlue = builder
+                    .defineInRange("unlockedOutlinesGreen", Constants.DEFAULT_UNLOCKED_GREEN_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
+            unlockedOutlinesBlue = builder
                     .comment("Unlocked line blue color component.",
                             "Default: " + Constants.DEFAULT_UNLOCKED_BLUE_VALUE)
                     .translation(Lang.CONFIG_UNLOCKED_OUTLINE_BLUE.key())
-                    .defineInRange("showOutlinesUnlockedBlue", Constants.DEFAULT_UNLOCKED_BLUE_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
-            showUnlockedOutlinesAlpha = builder
+                    .defineInRange("unlockedOutlinesBlue", Constants.DEFAULT_UNLOCKED_BLUE_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
+            unlockedOutlinesAlpha = builder
                     .comment("Unlocked line alpha color component.",
                             "Default: " + Constants.DEFAULT_UNLOCKED_ALPHA_VALUE)
                     .translation(Lang.CONFIG_UNLOCKED_OUTLINE_ALPHA.key())
-                    .defineInRange("showOutlinesUnlockedAlpha", Constants.DEFAULT_UNLOCKED_ALPHA_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
-            showLockedOutlinesRed = builder
+                    .defineInRange("unlockedOutlinesAlpha", Constants.DEFAULT_UNLOCKED_ALPHA_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
+            lockedOutlinesRed = builder
                     .comment("Locked line red color component.",
                             "Default: " + Constants.DEFAULT_LOCKED_RED_VALUE)
                     .translation(Lang.CONFIG_LOCKED_OUTLINE_RED.key())
-                    .defineInRange("showOutlinesLockedRed", Constants.DEFAULT_LOCKED_RED_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
-            showLockedOutlinesGreen = builder
+                    .defineInRange("lockedOutlinesRed", Constants.DEFAULT_LOCKED_RED_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
+            lockedOutlinesGreen = builder
                     .comment("Locked line green color component.",
                             "Default: " + Constants.DEFAULT_LOCKED_GREEN_VALUE)
                     .translation(Lang.CONFIG_LOCKED_OUTLINE_GREEN.key())
-                    .defineInRange("showOutlinesLockedGreen", Constants.DEFAULT_LOCKED_GREEN_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
-            showLockedOutlinesBlue = builder
+                    .defineInRange("lockedOutlinesGreen", Constants.DEFAULT_LOCKED_GREEN_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
+            lockedOutlinesBlue = builder
                     .comment("Locked line blue color component.",
                             "Default: " + Constants.DEFAULT_LOCKED_BLUE_VALUE)
                     .translation(Lang.CONFIG_LOCKED_OUTLINE_BLUE.key())
-                    .defineInRange("showOutlinesLockedBlue", Constants.DEFAULT_LOCKED_BLUE_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
-            showLockedOutlinesAlpha = builder
+                    .defineInRange("lockedOutlinesBlue", Constants.DEFAULT_LOCKED_BLUE_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
+            lockedOutlinesAlpha = builder
                     .comment("Locked line alpha color component.",
                             "Default: " + Constants.DEFAULT_LOCKED_ALPHA_VALUE)
                     .translation(Lang.CONFIG_LOCKED_OUTLINE_ALPHA.key())
-                    .defineInRange("showOutlinesLockedAlpha", Constants.DEFAULT_LOCKED_ALPHA_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
+                    .defineInRange("lockedOutlinesAlpha", Constants.DEFAULT_LOCKED_ALPHA_VALUE, Constants.MIN_COLOR_VALUE, Constants.MAX_COLOR_VALUE);
         }
     }
 
