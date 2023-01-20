@@ -11,6 +11,7 @@ import cyberslas.handsoff.util.Helper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
@@ -258,7 +259,7 @@ public class MarkedBlockManager {
     public static void loadChunkData(LevelAccessor level, ChunkAccess chunkAccess, CompoundTag compoundTag) {
         if (chunkAccess instanceof LevelChunk chunk) {
             List<Pair<GlobalPos, Pair<UUID, BlockState>>> list = compoundTag.getList("MarkedBlockData", Tag.TAG_COMPOUND).stream()
-                    .map(tag -> Pair.of(GlobalPos.CODEC.parse(NbtOps.INSTANCE, ((CompoundTag) tag).get("globalPos")).resultOrPartial(error -> HandsOff.logger.error(error)).get(), Pair.of(((CompoundTag) tag).getUUID("uuid"), NbtUtils.readBlockState(((CompoundTag) tag).getCompound("blockState")))))
+                    .map(tag -> Pair.of(GlobalPos.CODEC.parse(NbtOps.INSTANCE, ((CompoundTag) tag).get("globalPos")).resultOrPartial(error -> HandsOff.logger.error(error)).get(), Pair.of(((CompoundTag) tag).getUUID("uuid"), NbtUtils.readBlockState(chunk.getLevel().holderLookup(Registries.BLOCK), ((CompoundTag) tag).getCompound("blockState")))))
                     .toList();
 
             ChunkData data = INSTANCE.getOrCreateChunkData(chunk);

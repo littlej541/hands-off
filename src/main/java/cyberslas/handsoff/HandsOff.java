@@ -25,6 +25,7 @@ public class HandsOff {
         modLoadingContext.registerConfig(ModConfig.Type.COMMON, Config.CONFIG_SPEC_COMMON);
 
         fmlEventBus.addListener(this::commonSetup);
+        fmlEventBus.addListener(Items::buildCreativeTabContents);
 
         Items.ITEMS.register(fmlEventBus);
     }

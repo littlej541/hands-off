@@ -1,5 +1,6 @@
 package cyberslas.handsoff.server.util;
 
+import com.mojang.datafixers.kinds.IdF;
 import cyberslas.handsoff.config.Config;
 import cyberslas.handsoff.network.ClientboundMarkResultPacket;
 import cyberslas.handsoff.network.ClientboundUpdateMarkedBlockPositionsPacket;
@@ -11,12 +12,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryAccessor;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.npc.Villager;
 
 import java.util.Optional;
 import java.util.Set;
@@ -31,20 +33,9 @@ public class ServerHelper {
                 .collect(Collectors.toSet());
     }
 
-    public static void clearPoiAndMemory(LivingEntity entity, MemoryModuleType<GlobalPos> memoryModuleType) {
-        Brain<?> brain = entity.getBrain();
-        Optional<GlobalPos> globalPosOptional = brain.getMemory(memoryModuleType);
-        if (globalPosOptional.isPresent()) {
-            GlobalPos pos = globalPosOptional.get();
-            ServerLevel level = entity.getServer().getLevel(pos.dimension());
-            PoiManager poimanager = level.getPoiManager();
-
-            if (poimanager.exists(pos.pos(), (poiType) -> true)) {
-                poimanager.release(pos.pos());
-            }
-
-            brain.eraseMemory(memoryModuleType);
-        }
+    public static void clearPoiAndMemory(Villager villager, MemoryModuleType<GlobalPos> memoryModuleType, MemoryAccessor<IdF.Mu, GlobalPos> globalPosMemoryAccessor) {
+        villager.releasePoi(memoryModuleType);
+        globalPosMemoryAccessor.erase();
     }
 
     public static boolean removeFromBlockOwnershipMapIfExists(PoiManager poiManager, GlobalPos pos, Predicate<Holder<PoiType>> poiTypePredicate) {

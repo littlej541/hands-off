@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Vector4f;
+import org.joml.Vector4f;
 import cyberslas.handsoff.config.Config;
 import cyberslas.handsoff.mixin.MixinLevelRenderer;
 import cyberslas.handsoff.util.Helper;
