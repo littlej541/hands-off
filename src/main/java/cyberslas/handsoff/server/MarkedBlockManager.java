@@ -15,16 +15,19 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
@@ -41,7 +44,7 @@ public class MarkedBlockManager {
     private static MarkedBlockManager INSTANCE;
     private static MinecraftServer SERVER;
 
-    private final Map<ChunkAccess, ChunkData> chunkMap = new HashMap<>();
+    private final Map<ChunkId, ChunkData> chunkMap = new HashMap<>();
     private final Multimap<UUID, GlobalPos> uuidMarkedMap = HashMultimap.create();
     private final Set<Predicate<PoiType>> POI_PREDICATES = new HashSet<>();
     private final Set<Predicate<PoiType>> EXTRA_POI_PREDICATES = new HashSet<>();
@@ -74,13 +77,17 @@ public class MarkedBlockManager {
     }
 
     public static boolean contains(GlobalPos pos) {
-        ChunkAccess chunk = getChunk(pos);
-        return INSTANCE.chunkMap.get(chunk).contains(pos);
+        LevelChunk chunk = getChunkFromGlobalPos(pos);
+        ChunkData data = INSTANCE.getOrCreateChunkData(chunk);
+
+        return data.contains(pos);
     }
 
     public static UUID get(GlobalPos pos) {
-        ChunkAccess chunk = getChunk(pos);
-        return INSTANCE.chunkMap.get(chunk).get(pos);
+        LevelChunk chunk = getChunkFromGlobalPos(pos);
+        ChunkData data = INSTANCE.getOrCreateChunkData(chunk);
+
+        return data.get(pos);
     }
 
     public static Set<BlockPos> getPosMarkedByUUID(UUID uuid) {
@@ -97,8 +104,16 @@ public class MarkedBlockManager {
         return INSTANCE.POI_TEST.test(toTest);
     }
 
-    private static ChunkAccess getChunk(GlobalPos pos) {
-        return SERVER.getLevel(pos.dimension()).getChunk(pos.pos());
+    private static LevelChunk getChunkFromGlobalPos(GlobalPos pos) {
+        return (LevelChunk)getLevelFromGlobalPos(pos).getChunk(pos.pos());
+    }
+
+    private static ServerLevel getLevelFromGlobalPos(GlobalPos pos) {
+        return SERVER.getLevel(pos.dimension());
+    }
+
+    private static ChunkId getUniqueChunkId(LevelChunk chunk) {
+        return new ChunkId(chunk.getLevel().dimension(), chunk.getPos());
     }
 
     private MarkedBlockManager() {
@@ -134,13 +149,23 @@ public class MarkedBlockManager {
                 .filter(Objects::nonNull).collect(Collectors.toSet()));
     }
 
+    private ChunkData getOrCreateChunkData(LevelChunk chunk) {
+        ChunkId id = getUniqueChunkId(chunk);
+        if (!this.chunkMap.containsKey(id)) {
+            this.chunkMap.put(id, new ChunkData());
+        }
+
+        return this.chunkMap.get(id);
+    }
+
     private boolean putDirect(GlobalPos pos, UUID uuid) {
-        ChunkAccess chunk = getChunk(pos);
+        LevelChunk chunk = getChunkFromGlobalPos(pos);
         BlockState blockState = chunk.getBlockState(pos.pos());
         Block block = blockState.getBlock();
 
         if (this.POI_BLOCKS.stream().anyMatch(block::equals)) {
-            chunkMap.get(chunk).put(pos, uuid, blockState);
+            ChunkData data = this.getOrCreateChunkData(chunk);
+            data.put(pos, uuid, blockState);
             this.uuidMarkedMap.put(uuid, pos);
 
             return true;
@@ -150,8 +175,9 @@ public class MarkedBlockManager {
     }
 
     private boolean removeDirect(GlobalPos pos) {
-        ChunkAccess chunk = getChunk(pos);
-        Pair<UUID, BlockState> pair = this.chunkMap.get(chunk).remove(pos);
+        LevelChunk chunk = getChunkFromGlobalPos(pos);
+        ChunkData data = this.getOrCreateChunkData(chunk);
+        Pair<UUID, BlockState> pair = data.remove(pos);
         if (pair != null) {
             this.uuidMarkedMap.remove(pair.getFirst(), pos);
             return true;
@@ -166,48 +192,75 @@ public class MarkedBlockManager {
         for(ServerPlayer player : players) {
             ServerHelper.Network.sendMarkedBlocksUpdate(player, range);
         }
+        getChunkFromGlobalPos(pos).setUnsaved(true);
     }
 
-    public static CompoundTag saveChunk(LevelAccessor level, ChunkAccess chunk, CompoundTag compoundTag) {
-        ChunkData data = INSTANCE.chunkMap.get(chunk);
-        data.clearBadEntries();
-
-        ListTag listTag = new ListTag();
+    private void clearBadEntries(ChunkData data) {
+        Set<GlobalPos> markedForRemoval = new HashSet<>();
         for(Map.Entry<GlobalPos, Pair<UUID, BlockState>> entry : data.markedBlockMap.entrySet()) {
-            CompoundTag newTag = new CompoundTag();
+            BlockPos blockPos = entry.getKey().pos();
+            BlockState blockState = entry.getValue().getSecond();
+            Block block = blockState.getBlock();
 
-            DataResult<Tag> dataResult = GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey());
-            newTag.put("globalPos", dataResult.resultOrPartial(error -> HandsOff.logger.error(error)).get());
-            newTag.putUUID("uuid", entry.getValue().getFirst());
-            newTag.put("blockState", NbtUtils.writeBlockState(entry.getValue().getSecond()));
-            listTag.add(newTag);
+            if (!SERVER.getLevel(entry.getKey().dimension()).getPoiManager().exists(blockPos, INSTANCE.BLOCK_POI_MAPPING.get(block).getPredicate())) {
+                markedForRemoval.add(entry.getKey());
+            }
         }
 
-        compoundTag.put("MarkedBlockData", listTag);
+        for(GlobalPos pos : markedForRemoval) {
+            this.removeDirect(pos);
+        }
+    }
+
+    public static CompoundTag saveChunkData(LevelAccessor level, ChunkAccess chunkAccess, CompoundTag compoundTag) {
+        if (chunkAccess instanceof LevelChunk chunk) {
+            ChunkData data = INSTANCE.getOrCreateChunkData(chunk);
+            INSTANCE.clearBadEntries(data);
+
+            ListTag listTag = new ListTag();
+            for (Map.Entry<GlobalPos, Pair<UUID, BlockState>> entry : data.markedBlockMap.entrySet()) {
+                CompoundTag newTag = new CompoundTag();
+
+                DataResult<Tag> dataResult = GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey());
+                newTag.put("globalPos", dataResult.resultOrPartial(error -> HandsOff.logger.error(error)).get());
+                newTag.putUUID("uuid", entry.getValue().getFirst());
+                newTag.put("blockState", NbtUtils.writeBlockState(entry.getValue().getSecond()));
+                listTag.add(newTag);
+            }
+
+            compoundTag.put("MarkedBlockData", listTag);
+        }
+
         return compoundTag;
     }
 
-    public static void loadChunk(LevelAccessor level, ChunkAccess chunk, CompoundTag compoundTag) {
-        List<Pair<GlobalPos, Pair<UUID, BlockState>>> list =  compoundTag.getList("MarkedBlockData", Tag.TAG_COMPOUND).stream()
-                .map(tag -> Pair.of(GlobalPos.CODEC.parse(NbtOps.INSTANCE, ((CompoundTag)tag).get("globalPos")).resultOrPartial(error -> HandsOff.logger.error(error)).get(), Pair.of(((CompoundTag)tag).getUUID("uuid"), NbtUtils.readBlockState(((CompoundTag)tag).getCompound("blockState")))))
-                .toList();
+    public static void loadChunkData(LevelAccessor level, ChunkAccess chunkAccess, CompoundTag compoundTag) {
+        if (chunkAccess instanceof LevelChunk chunk) {
+            List<Pair<GlobalPos, Pair<UUID, BlockState>>> list = compoundTag.getList("MarkedBlockData", Tag.TAG_COMPOUND).stream()
+                    .map(tag -> Pair.of(GlobalPos.CODEC.parse(NbtOps.INSTANCE, ((CompoundTag) tag).get("globalPos")).resultOrPartial(error -> HandsOff.logger.error(error)).get(), Pair.of(((CompoundTag) tag).getUUID("uuid"), NbtUtils.readBlockState(((CompoundTag) tag).getCompound("blockState")))))
+                    .toList();
 
-        ChunkData data = new ChunkData(((ServerLevel)level).getPoiManager());
-        list.forEach(entry -> data.put(entry.getFirst(), entry.getSecond().getFirst(), entry.getSecond().getSecond()));
-        INSTANCE.chunkMap.put(chunk, data);
+            ChunkData data = INSTANCE.getOrCreateChunkData(chunk);
+
+            list.forEach(entry -> {
+                data.put(entry.getFirst(), entry.getSecond().getFirst(), entry.getSecond().getSecond());
+                INSTANCE.uuidMarkedMap.put(entry.getSecond().getFirst(), entry.getFirst());
+            });
+        }
     }
 
-    public static void unloadChunk(LevelAccessor level, ChunkAccess chunk) {
-        INSTANCE.chunkMap.remove(chunk);
+    public static void unloadChunk(LevelAccessor level, ChunkAccess chunkAccess) {
+        if (chunkAccess instanceof LevelChunk chunk) {
+            ChunkId id = getUniqueChunkId(chunk);
+            INSTANCE.chunkMap.remove(id).markedBlockMap.forEach((key, value) -> INSTANCE.uuidMarkedMap.remove(value.getFirst(), key));
+        }
     }
 
     private static class ChunkData {
-        private final PoiManager poiManager;
         private final Map<GlobalPos, Pair<UUID, BlockState>> markedBlockMap;
 
-        private ChunkData(PoiManager poiManager) {
+        private ChunkData() {
             this.markedBlockMap = new HashMap<>();
-            this.poiManager = poiManager;
         }
 
         private Pair<UUID, BlockState> put(GlobalPos pos, UUID uuid, BlockState blockState) {
@@ -225,22 +278,16 @@ public class MarkedBlockManager {
         private boolean contains(GlobalPos pos) {
             return this.markedBlockMap.containsKey(pos);
         }
+    }
 
-        private void clearBadEntries() {
-            Set<GlobalPos> markedForRemoval = new HashSet<>();
-            for(Map.Entry<GlobalPos, Pair<UUID, BlockState>> entry : this.markedBlockMap.entrySet()) {
-                BlockPos blockPos = entry.getKey().pos();
-                BlockState blockState = entry.getValue().getSecond();
-                Block block = blockState.getBlock();
-
-                if (!this.poiManager.exists(blockPos, INSTANCE.BLOCK_POI_MAPPING.get(block).getPredicate())) {
-                    markedForRemoval.add(entry.getKey());
-                }
+    private record ChunkId(ResourceKey<Level> dimension, ChunkPos pos) {
+        @Override
+        public boolean equals(Object other) {
+            if (other instanceof ChunkId otherId) {
+                return this.dimension.equals(otherId.dimension()) && this.pos.equals(otherId.pos());
             }
 
-            for(GlobalPos pos : markedForRemoval) {
-                this.remove(pos);
-            }
+            return false;
         }
     }
 }

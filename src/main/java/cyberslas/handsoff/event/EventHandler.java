@@ -2,7 +2,7 @@ package cyberslas.handsoff.event;
 
 import cyberslas.handsoff.server.MarkedBlockManager;
 import cyberslas.handsoff.util.Constants;
-import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -11,18 +11,18 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = Constants.MODID)
 public class EventHandler {
     @SubscribeEvent
-    public static void onServerStarting(ServerStartingEvent event) {
+    public static void onServerStarting(ServerAboutToStartEvent event) {
         MarkedBlockManager.init(event.getServer());
     }
 
     @SubscribeEvent
-    public static void onChunkLoad(ChunkDataEvent.Load event) {
-        MarkedBlockManager.loadChunk(event.getWorld(), event.getChunk(), event.getData());
+    public static void onChunkLoadData(ChunkDataEvent.Load event) {
+        MarkedBlockManager.loadChunkData(event.getWorld(), event.getChunk(), event.getData());
     }
 
     @SubscribeEvent
-    public static void onChunkSave(ChunkDataEvent.Save event) {
-        MarkedBlockManager.saveChunk(event.getWorld(), event.getChunk(), event.getData());
+    public static void onChunkSaveData(ChunkDataEvent.Save event) {
+        MarkedBlockManager.saveChunkData(event.getWorld(), event.getChunk(), event.getData());
     }
 
     @SubscribeEvent
