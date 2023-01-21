@@ -91,9 +91,20 @@ mixin {
     add sourceSets.main, "${modid}.refmap.json"
 }
 
+repositories {
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    compileOnly fg.deobf('curse.maven:rubidium-574856:3973894')
 }
 
 task generateLangJava {
