@@ -237,6 +237,9 @@ public class MarkedBlockManager {
     public static CompoundTag saveChunkData(LevelAccessor level, ChunkAccess chunkAccess, CompoundTag compoundTag) {
         if (chunkAccess instanceof LevelChunk chunk) {
             ChunkData data = INSTANCE.getOrCreateChunkData(chunk);
+            if (data.markForDelete) {
+                INSTANCE.chunkMap.remove(getUniqueChunkId(chunk)).markedBlockMap.forEach((key, value) -> INSTANCE.uuidMarkedMap.remove(value.getFirst(), key));
+            }
             INSTANCE.clearBadEntries(data);
 
             ListTag listTag = new ListTag();
@@ -274,12 +277,13 @@ public class MarkedBlockManager {
     public static void unloadChunk(LevelAccessor level, ChunkAccess chunkAccess) {
         if (chunkAccess instanceof LevelChunk chunk) {
             ChunkId id = getUniqueChunkId(chunk);
-            INSTANCE.chunkMap.remove(id).markedBlockMap.forEach((key, value) -> INSTANCE.uuidMarkedMap.remove(value.getFirst(), key));
+            INSTANCE.chunkMap.get(id).markForDelete = true;
         }
     }
 
     private static class ChunkData {
         private final Map<GlobalPos, Pair<UUID, BlockState>> markedBlockMap;
+        private boolean markForDelete = false;
 
         private ChunkData() {
             this.markedBlockMap = new HashMap<>();
@@ -293,7 +297,7 @@ public class MarkedBlockManager {
             return this.markedBlockMap.remove(pos);
         }
 
-        public UUID get(GlobalPos pos) {
+        private UUID get(GlobalPos pos) {
             return this.markedBlockMap.get(pos).getFirst();
         }
 
