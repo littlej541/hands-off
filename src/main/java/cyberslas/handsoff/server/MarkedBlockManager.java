@@ -276,8 +276,7 @@ public class MarkedBlockManager {
 
     public static void unloadChunk(LevelAccessor level, ChunkAccess chunkAccess) {
         if (chunkAccess instanceof LevelChunk chunk) {
-            ChunkId id = getUniqueChunkId(chunk);
-            INSTANCE.chunkMap.get(id).markForDelete = true;
+            INSTANCE.getOrCreateChunkData(chunk).markForDelete = true;
         }
     }
 
