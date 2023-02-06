@@ -216,10 +216,10 @@ public class MarkedBlockManager {
     public static CompoundTag saveChunkData(LevelAccessor level, ChunkAccess chunkAccess, CompoundTag compoundTag) {
         if (chunkAccess instanceof LevelChunk chunk) {
             ChunkData data = INSTANCE.getOrCreateChunkData(chunk);
+            INSTANCE.clearBadEntries(data);
             if (data.markForDelete) {
                 INSTANCE.chunkMap.remove(getUniqueChunkId(chunk)).markedBlockMap.forEach((key, value) -> INSTANCE.uuidMarkedMap.remove(value.getFirst(), key));
             }
-            INSTANCE.clearBadEntries(data);
 
             ListTag listTag = new ListTag();
             for (Map.Entry<GlobalPos, Pair<UUID, BlockState>> entry : data.markedBlockMap.entrySet()) {
