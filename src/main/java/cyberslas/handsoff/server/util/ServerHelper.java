@@ -44,6 +44,10 @@ public class ServerHelper {
             }
 
             brain.eraseMemory(memoryModuleType);
+
+            if (memoryModuleType == MemoryModuleType.HOME && entity.isSleeping() && entity.getSleepingPos().get().equals(pos.pos())) {
+                entity.stopSleeping();
+            }
         }
     }
 
