@@ -34,8 +34,13 @@ public class ServerHelper {
     }
 
     public static void clearPoiAndMemory(Villager villager, MemoryModuleType<GlobalPos> memoryModuleType, MemoryAccessor<IdF.Mu, GlobalPos> globalPosMemoryAccessor) {
+        GlobalPos pos = villager.getBrain().getMemory(memoryModuleType).get();
         villager.releasePoi(memoryModuleType);
         globalPosMemoryAccessor.erase();
+
+        if (memoryModuleType == MemoryModuleType.HOME && villager.isSleeping() && villager.getSleepingPos().get().equals(pos.pos())) {
+            villager.stopSleeping();
+        }
     }
 
     public static boolean removeFromBlockOwnershipMapIfExists(PoiManager poiManager, GlobalPos pos, Predicate<Holder<PoiType>> poiTypePredicate) {
