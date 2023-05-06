@@ -22,7 +22,7 @@
   "minVersion": "0.8",
   "client": [
     "MixinLevelRenderer",
-    "compat.rubidium.MixinLevelRendererInterface",
+    "MixinLevelRendererAccessor",
     "compat.rubidium.MixinRenderSectionManager",
     "compat.rubidium.MixinSodiumWorldRenderer"
   ]
