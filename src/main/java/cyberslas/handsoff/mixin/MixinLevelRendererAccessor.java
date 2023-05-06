@@ -1,14 +1,12 @@
-package cyberslas.handsoff.mixin.compat.rubidium;
+package cyberslas.handsoff.mixin;
 
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import javax.annotation.Nullable;
-
 @Mixin(LevelRenderer.class)
-public interface MixinLevelRendererInterface {
+public interface MixinLevelRendererAccessor {
     @Accessor
     Frustum getCullingFrustum();
 
